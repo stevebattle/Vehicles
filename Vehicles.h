@@ -19,42 +19,15 @@
 
 #include "Arduino.h"
 
-class Vehicle {
-
-public:
-	Vehicle();
-	int buttonPressed();
-	float leftSensor();
-	float rightSensor();
-	float frontSensor();
-	void motors(float left, float right);
-	void multiply(float a[], float b[], float c[], int l, int m, int n);
-	void mutate(float a[], int m, int n, float min, float max);
-	void squash(float a[], float sigmoids[], int n);
-	void sensorInput(float data[], int n);
-	float smooth(int window, float average, float value);
-	float oscillator(int frequency);
-	void r3();
-
-private:
-	float normalize(int sensor, int value);
-	int _buttonValue, _buttonCount;
-	float _m1, _m2;
-	enum _sensors { LEFT, RIGHT, RANGE };
-	int _buttons[5];
-	int _min[3], _max[3];
-	float _frontAverage;
-	int _range_sensor;
-	int _button_input;
-};
-
 class AnalogSensor {
 public:
 	AnalogSensor(int analogInput);
-	int input();
-	float normalize(int value, int * min, int * max);
+	int read();
+	float input();
 private:
+	float normalize(int value);
 	int _input;
+	int _min, _max;
 };
 
 class DigitalSensor {
@@ -63,14 +36,6 @@ public:
 	int input();
 private:
 	int _input;
-};
-
-class LightSensor : public AnalogSensor {
-public:
-	LightSensor(int analogInput);
-	float input();
-private:
-	int _min, _max;
 };
 
 class Bumper : public DigitalSensor {
