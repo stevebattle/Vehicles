@@ -167,3 +167,45 @@ void Motors::output(float left, float right) {
   digitalWrite(_m2, right>=0 ? LOW : HIGH);
   _prevM2 = right;
 }
+
+/* Activation function */
+
+Sigmoid::Sigmoid(float slope) {
+	_f = slope;
+}
+
+float Activation::apply(float x) {
+	return 0.5;
+}
+
+float Sigmoid::apply(float x) {
+	return 1/(1+exp(- _f*x));
+}
+
+SaturatingLinearFunction::SaturatingLinearFunction(float min, float max) {
+	_min = min;
+	_max = max;
+}
+
+float SaturatingLinearFunction::apply(float x) {
+	return min(max(x,_min),_max);
+}
+
+/* Relaxation Neuron */
+
+RelaxationNeuron::RelaxationNeuron(Activation * a, float x) {
+	_activation = a;
+	_x = x;
+}
+
+void RelaxationNeuron::solve(float bias, float ta, float tr, float s, float b, float y) {
+	output = _activation->apply(_x + bias);
+	_dv = (output - _v)/ta;
+	_dx = (s - _v*b - _x + y)/tr;
+}
+
+void RelaxationNeuron::step(float dt) {
+	_x = _x + _dx*dt;
+	_v = _v + _dv*dt;
+}
+

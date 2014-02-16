@@ -61,4 +61,44 @@ private:
 	int _m1, _e1, _m2, _e2, _prevM1, _prevM2;
 };
 
+class Activation {
+public:
+	virtual float apply(float x);
+};
+
+class Sigmoid : public Activation {
+public:
+	Sigmoid(float slope);
+	float apply(float x);
+private:
+	float _f;
+};
+
+class SaturatingLinearFunction : public Activation {
+public:
+	SaturatingLinearFunction(float min, float max);
+	float apply(float x);
+private:
+	float _min, _max;
+};
+
+class RelaxationNeuron {
+public:
+	RelaxationNeuron(Activation * a, float x);
+	// bias is the threshold value below which the neuron does not fire
+	// ta, tr are time constants
+	// s is a tonic input
+	// b is the adaptation factor, b=0 for no adaptation
+	// y is the weighted impulse rate of the input stimuli
+	void solve(float bias, float ta, float tr, float s, float b, float y);
+	void step(float dt);
+	// output is the firing rate of the neuron.
+	float output;
+private:
+	Activation * _activation;
+	// _x is the membrane potential of the neuron
+	// _v represents the degree of adaptation
+	float _x, _v, _dx, _dv;
+};
+
 #endif
