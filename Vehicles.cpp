@@ -22,7 +22,7 @@
 
 /* multiply l*m (rows,cols) matrix by m*n matrix */
 
-void multiply(float a[], float b[], float c[], int l, int m, int n) {
+void Hebbian::multiply(float a[], float b[], float c[], int l, int m, int n) {
   for (int i=0; i<l; i++) {
     for (int j=0; j<n; j++) {
       c[i*n+j] = 0;
@@ -31,6 +31,17 @@ void multiply(float a[], float b[], float c[], int l, int m, int n) {
       }
     }
   }
+}
+
+/* hebbian learning on m*n (rows,cols) weight matrix */
+
+void Hebbian::learn(float dt, float pre[], float weight[], float post[], int m, int n) {
+	for (int i=0; i<m; i++) {
+		for (int j=0; j<n; j++) {
+			if (post[j]>0.5)
+				weight[i*n+j] = (1-dt)*weight[i*n+j] + dt*pre[i]*post[j];
+		}
+	}
 }
 
 /* mutation with lateral symmetry */
@@ -191,20 +202,20 @@ float SaturatingLinearFunction::apply(float x) {
 	return min(max(x,_min),_max);
 }
 
-/* Relaxation Neuron */
+/* Adaptive Neuron */
 
-RelaxationNeuron::RelaxationNeuron(Activation * a, float x) {
+AdaptiveNeuron::AdaptiveNeuron(Activation * a, float x) {
 	_activation = a;
 	_x = x;
 }
 
-void RelaxationNeuron::solve(float bias, float ta, float tr, float s, float b, float y) {
+void AdaptiveNeuron::solve(float bias, float ta, float tr, float s, float b, float y) {
 	output = _activation->apply(_x + bias);
 	_dv = (output - _v)/ta;
 	_dx = (s - _v*b - _x + y)/tr;
 }
 
-void RelaxationNeuron::step(float dt) {
+void AdaptiveNeuron::step(float dt) {
 	_x = _x + _dx*dt;
 	_v = _v + _dv*dt;
 }

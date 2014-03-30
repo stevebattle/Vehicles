@@ -82,9 +82,9 @@ private:
 	float _min, _max;
 };
 
-class RelaxationNeuron {
+class AdaptiveNeuron {
 public:
-	RelaxationNeuron(Activation * a, float x);
+	AdaptiveNeuron(Activation * a, float x);
 	// bias is the threshold value below which the neuron does not fire
 	// ta, tr are time constants
 	// s is a tonic input
@@ -99,6 +99,12 @@ private:
 	// _x is the membrane potential of the neuron
 	// _v represents the degree of adaptation
 	float _x, _v, _dx, _dv;
+};
+
+class Hebbian {
+public:
+	void multiply(float a[], float b[], float c[], int l, int m, int n);
+	void learn(float t, float pre[], float weight[], float post[], int m, int n);
 };
 
 #endif
