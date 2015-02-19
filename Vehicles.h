@@ -19,6 +19,11 @@
 
 #include "Arduino.h"
 
+template <typename type>
+type sign(type value) { 
+  return type((value>0)-(value<0)); 
+}
+
 class AnalogSensor {
 public:
 	AnalogSensor(int analogInput);
@@ -44,6 +49,14 @@ public:
 	float input();
 };
 
+class PushButton : public DigitalSensor {
+public:
+	PushButton(int digitalInput);
+	int pressed();
+private:
+	int _pushButtonCount;
+};
+
 class Buttons : public AnalogSensor {
 public:
 	Buttons(int analogInput);
@@ -64,6 +77,12 @@ private:
 class Activation {
 public:
 	virtual float apply(float x);
+};
+
+class Heaviside : public Activation {
+public:
+	Heaviside();
+	float apply(float x);	
 };
 
 class Sigmoid : public Activation {

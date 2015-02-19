@@ -16,7 +16,7 @@
 
 
 #define NUM_BUTTONS 5
-#define DEBOUNCE 10
+#define DEBOUNCE 5
 #define WINDOW 10
 #define INT_MAX 32767
 
@@ -113,6 +113,21 @@ float Bumper::input() {
   return b ? 0.0 : 1.0;	
 }
 
+/* Push Button */
+
+PushButton::PushButton(int digitalInput) : DigitalSensor(digitalInput) {
+}
+
+int PushButton::pressed() {
+  int in = DigitalSensor::input();
+  if (in>0) {
+    if (_pushButtonCount<=DEBOUNCE) _pushButtonCount++;
+    if (_pushButtonCount==DEBOUNCE) return 1;
+  }
+  else _pushButtonCount = 0;
+  return 0;
+}
+
 /* Buttons */
 
 Buttons::Buttons(int analogInput) : AnalogSensor(analogInput) {
@@ -179,14 +194,14 @@ void Motors::output(float left, float right) {
   _prevM2 = right;
 }
 
-/* Activation function */
-
-Sigmoid::Sigmoid(float slope) {
-	_f = slope;
-}
+/* Activation functions */
 
 float Activation::apply(float x) {
 	return 0.5;
+}
+
+Sigmoid::Sigmoid(float slope) {
+	_f = slope;
 }
 
 float Sigmoid::apply(float x) {
@@ -200,6 +215,13 @@ SaturatingLinearFunction::SaturatingLinearFunction(float min, float max) {
 
 float SaturatingLinearFunction::apply(float x) {
 	return min(max(x,_min),_max);
+}
+
+Heaviside::Heaviside() {
+}
+
+float Heaviside::apply(float x) {
+	return x>=0;
 }
 
 /* Adaptive Neuron */
